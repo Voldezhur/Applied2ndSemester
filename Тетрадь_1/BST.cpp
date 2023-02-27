@@ -351,4 +351,20 @@ int main()
 
     std::cout << "\nДерево без узла со значением " << b << ":\n";
     A.Print();
+
+    std::cout << "\n\n\n";
+
+    // Дерево B
+    BST B;
+
+    B.Add(1);
+    B.Add(8);
+    B.Add(4);
+    B.Add(5);
+    B.Add(2);
+    B.Add(7);
+    B.Add(8);
+    B.Add(9);
+
+    B.Print();
 }
