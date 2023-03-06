@@ -86,6 +86,32 @@ struct AVL_tree
         return nullptr;
     }
 
+    // Левый поворот относительно опорного узла _node
+    void lTurn(Node* _node)
+    {
+        // Перецепление указателей родителей
+        _node->left->parent = _node->parent;
+        _node->parent = _node->left;
+               
+        // Перецепление указателей правого поддерева левого поддерева опорного узла
+        Node* T2 = _node->left->right;
+        _node->left->right = _node;
+        _node->left = T2;
+    }
+    
+    // Правый поворот относительно опорного узла _node
+    void rTurn(Node* _node)
+    {
+        // Перецепление указателей родителей
+        _node->right->parent = _node->parent;
+        _node->parent = _node->right;
+                
+        // Перецепление указателей левого поддерева правого поддерева опорного узла
+        Node* T2 = _node->right->left;
+        _node->right->left = _node;
+        _node->right = T2;
+    }
+
     // Определение глубины дерева
     int depth = 0;
     int Depth(Node* par, int d)
@@ -142,30 +168,39 @@ struct AVL_tree
             }
         }
 
+        // Перестройка
         else
         {
             // Первый случай
-            if(balance == -2 && _node->left->balance == -1 && (Depth(_node->left->left) == Depth(_node->left->right) && Depth(_node->left->left) == Depth(_node->right)))
+            if(balance == -2 && _node->left->balance == -1 && (Depth(_node->left->left) - 1 == Depth(_node->left->right) && Depth(_node->left->left) - 1 == Depth(_node->right)))
             {
-                // Перецепление указателей родителей
-                _node->left->parent = _node->parent;
-                _node->parent = _node->left;
-                // Перецепление указателей правого поддерева левого поддерева опорного узла
-                Node* T2 = _node->left->right;
-                _node->left->right = _node;
-                _node->left = T2;
+                lTurn(_node);
             }
 
             // Второй случай - симметричный первому
-            if(balance == -2 && _node->right->balance == -1 && (Depth(_node->right->right) == Depth(_node->right->left) && Depth(_node->right->right) == Depth(_node->left)))
+            if(balance == 2 && _node->right->balance == 1 && (Depth(_node->right->right) - 1 == Depth(_node->right->left) && Depth(_node->right->right) - 1 == Depth(_node->left)))
             {
-                // Перецепление указателей родителей
-                _node->right->parent = _node->parent;
-                _node->parent = _node->right;
-                // Перецепление указателей левого поддерева правого поддерева опорного узла
-                Node* T2 = _node->right->left;
-                _node->right->left = _node;
-                _node->right = T2;
+                rTurn(_node);
+            }
+
+            // Третий случай - двойной поворот
+            if(balance == -2 && _node->left->balance == 1 && _node->left->right->balance == -1)
+            {
+                if(Depth(_node->right) == Depth(_node->left->left) == Depth(_node->left->right->left) == Depth(_node->left->right->right) + 1)
+                {
+                    lTurn(_node->left);
+                    rTurn(_node);
+                }
+            }
+
+            // Четвертый случай - симметрично третьему
+            if(balance == 2 && _node->right->balance == -1 && _node->right->left->balance == 1)
+            {
+                if(Depth(_node->left) == Depth(_node->right->right) == Depth(_node->right->left->right) == Depth(_node->right->left->left) + 1)
+                {
+                    rTurn(_node->right);
+                    lTurn(_node);
+                }
             }
 
             // Обновление баланса
@@ -250,7 +285,7 @@ int main()
 {
     AVL_tree A;
 
-    A.AddAndRebalance(-5);
+    A.AddAndRebalance(5);
     A.AddAndRebalance(3);
     A.AddAndRebalance(6);
     A.AddAndRebalance(7);
