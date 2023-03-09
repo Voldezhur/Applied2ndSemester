@@ -1,10 +1,10 @@
-// Сбалансированное двочиное дерево поиска
+// КЧ Дерево
 
 
 #include <iostream>
 #include <cmath>
 
-// АВЛ дерево
+// КЧ дерево
 struct AVL_tree
 {
     // Структура узла АВЛ дерева
@@ -17,10 +17,10 @@ struct AVL_tree
         Node* right;
         Node* parent;
         
-        int balance; 
+        bool isBlack;
 
         // Конструктор
-        Node(int _val) : val(_val), left(nullptr), right(nullptr), parent(nullptr), balance(0){}
+        Node(int _val) : val(_val), left(nullptr), right(nullptr), parent(nullptr), isBlack(true){}
     };
 
     // Корень
@@ -34,7 +34,7 @@ struct AVL_tree
             std::cout << prefix << (isLeft ? "├──" : "└──");
 
             // Вывод значения узла и количества повторений
-            std::cout << _node->val << '(' << _node->balance << ')' << std::endl;
+            std::cout << _node->val << '(' << (_node->isBlack ? "black" : "red") << ')' << std::endl;
 
             // Рекурсивный вывод остальных уровней дерева
             // Слева
@@ -147,67 +147,6 @@ struct AVL_tree
         return Depth(par, depth);
     }
 
-    /* 
-    Идем снизу вверх, пересчитываем баланс.
-    Если изменился, идем дальше вверх
-    Если модуль больше 2, перестройка 
-    */
-    void UpdateBalance(Node* _node)
-    {
-        //  Обновление баланса
-        int tempBalance = _node->balance;
-        int balance = Depth(_node->right) - Depth(_node->left);
-        _node->balance = balance;
-
-        // если баланс изменился - продолжаем проход  вверх
-        if(tempBalance != balance)
-        {
-            if(_node->parent)
-            {
-                UpdateBalance(_node->parent);
-            }
-        }
-
-        // Перестройка
-        else
-        {
-            // Первый случай
-            if(balance == -2 && _node->left->balance == -1 && (Depth(_node->left->left) - 1 == Depth(_node->left->right) && Depth(_node->left->left) - 1 == Depth(_node->right)))
-            {
-                lTurn(_node);
-            }
-
-            // Второй случай - симметричный первому
-            if(balance == 2 && _node->right->balance == 1 && (Depth(_node->right->right) - 1 == Depth(_node->right->left) && Depth(_node->right->right) - 1 == Depth(_node->left)))
-            {
-                rTurn(_node);
-            }
-
-            // Третий случай - двойной поворот
-            if(balance == -2 && _node->left->balance == 1 && _node->left->right->balance == -1)
-            {
-                if(Depth(_node->right) == Depth(_node->left->left) == Depth(_node->left->right->left) == Depth(_node->left->right->right) + 1)
-                {
-                    lTurn(_node->left);
-                    rTurn(_node);
-                }
-            }
-
-            // Четвертый случай - симметрично третьему
-            if(balance == 2 && _node->right->balance == -1 && _node->right->left->balance == 1)
-            {
-                if(Depth(_node->left) == Depth(_node->right->right) == Depth(_node->right->left->right) == Depth(_node->right->left->left) + 1)
-                {
-                    rTurn(_node->right);
-                    lTurn(_node);
-                }
-            }
-
-            // Обновление баланса
-            UpdateBalance(_node);
-        }
-    }
-
     // Добавление элементов в дерево
     void Add(int _val)
     {
@@ -264,20 +203,6 @@ struct AVL_tree
             }
         }
     }
-
-    // Добавление новых элементов, обновление баланса и перестройка при необходимости
-    void AddAndRebalance(int _val)
-    {
-        Add(_val);
-        
-        Node* nodeParent = Find(_val)->parent;
-        
-        if(nodeParent)
-        {
-            UpdateBalance(nodeParent);
-        }
-    }
-
 };
 
 
@@ -285,11 +210,11 @@ int main()
 {
     AVL_tree A;
 
-    A.AddAndRebalance(5);
-    A.AddAndRebalance(3);
-    A.AddAndRebalance(6);
-    A.AddAndRebalance(7);
-    A.AddAndRebalance(23);
+    A.Add(-5);
+    A.Add(3);
+    A.Add(6);
+    A.Add(7);
+    A.Add(23);
 
     A.Print();
 }
