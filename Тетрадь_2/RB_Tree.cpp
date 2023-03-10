@@ -20,7 +20,7 @@ struct AVL_tree
         bool isBlack;
 
         // Конструктор
-        Node(int _val) : val(_val), left(nullptr), right(nullptr), parent(nullptr), isBlack(true){}
+        Node(int _val) : val(_val), left(nullptr), right(nullptr), parent(nullptr), isBlack(false){}
     };
 
     // Корень
@@ -147,6 +147,116 @@ struct AVL_tree
         return Depth(par, depth);
     }
 
+    // Красно-красное нарушение
+    void RR_Violation(Node* _node)
+    {
+        // Если родитель слева своего родителя
+        if(_node->parent->val < _node->parent->parent->val)
+        {
+            // Случай 1
+            if(!_node->parent->isBlack && !_node->parent->parent->right->isBlack)
+            {
+                // Перекраска отца и дяди
+                _node->parent->isBlack = true;
+                _node->parent->parent->right->isBlack = true;
+
+                // Перекраска деда и проверка на КК нарушениие, если дед не корень
+                if(_node->parent->parent->parent)
+                {
+                    _node->parent->parent->isBlack = true;
+                    
+                    // Проверка на КК нарушение
+                    Node* D = _node->parent->parent;
+        
+                    if(D->parent && D->parent->parent && D->parent->parent->right && D->parent->parent->left)
+                    {
+                        RR_Violation(_node->parent->parent);
+                    }
+                }
+            }
+
+            // Случай 2 и 3
+            if(!_node->parent->isBlack && _node->parent->parent->right->isBlack)
+            {
+                // Если цепочка образует линию - случай 2
+                if(_node->val < _node->parent->val)
+                {
+                    // Перекрашивание
+                    _node->parent->parent->isBlack = false;
+                    _node->parent->isBlack = true;
+
+                    // Поворот направо относительно деда
+                    rTurn(_node->parent->parent);
+                }
+
+                // Если цепочка образует угол - случай 3
+                else
+                {
+                    // Перекрашивание
+                    _node->isBlack = true;
+                    _node->parent->parent->isBlack = false;
+
+                    // Двойной поворот
+                    lTurn(_node->parent);
+                    rTurn(_node->parent);
+                }
+            }
+        }
+
+        // Если родитель справа своего родителя
+        else
+        {
+            // Случай 1
+            if(!_node->parent->isBlack && !_node->parent->parent->left->isBlack)
+            {
+                // Перекраска отца и дяди
+                _node->parent->isBlack = true;
+                _node->parent->parent->right->isBlack = true;
+
+                // Перекраска деда и проверка на КК нарушениие, если дед не корень
+                if(_node->parent->parent->parent)
+                {
+                    _node->parent->parent->isBlack = true;
+                    
+                    // Проверка на КК нарушение
+                    Node* D = _node->parent->parent;
+        
+                    if(D->parent && D->parent->parent && D->parent->parent->right && D->parent->parent->left)
+                    {
+                        RR_Violation(_node->parent->parent);
+                    }
+                }
+            }
+
+            // Случай 2 и 3
+            else if(!_node->parent->isBlack && _node->parent->parent->left->isBlack)
+            {
+                // Если цепочка образует линию - случай 2
+                if(_node->val < _node->parent->val)
+                {
+                    // Перекрашивание
+                    _node->parent->parent->isBlack = false;
+                    _node->parent->isBlack = true;
+
+                    // Поворот направо относительно деда
+                    lTurn(_node->parent->parent);
+                }
+
+                // Если цепочка образует угол - случай 3
+                else
+                {
+                    // Перекрашивание
+                    _node->isBlack = true;
+                    _node->parent->parent->isBlack = false;
+
+                    // Двойной поворот
+                    rTurn(_node->parent);
+                    lTurn(_node->parent);
+                }
+            }
+        }
+    }
+
     // Добавление элементов в дерево
     void Add(int _val)
     {
@@ -154,6 +264,7 @@ struct AVL_tree
         if(root == nullptr)
         {
             Node* p = new Node(_val);
+            p->isBlack = true;
             root = p;
         }
 
@@ -202,6 +313,14 @@ struct AVL_tree
                 Right.Add(_val);
             }
         }
+
+        // Проверка на КК нарушение
+        Node* D = Find(_val);
+        
+        if(D->parent && D->parent->parent && D->parent->parent->right && D->parent->parent->left)
+        {
+            RR_Violation(Find(_val));
+        }
     }
 };
 
@@ -211,9 +330,10 @@ int main()
     AVL_tree A;
 
     A.Add(-5);
+    A.Add(-7);
     A.Add(3);
     A.Add(6);
-    A.Add(7);
+    A.Add(1);
     A.Add(23);
 
     A.Print();
