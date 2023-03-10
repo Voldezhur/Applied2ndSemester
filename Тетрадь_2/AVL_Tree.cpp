@@ -421,7 +421,6 @@ int main()
     A.AddAndRebalance(6);
     A.AddAndRebalance(7);
     A.AddAndRebalance(23);
-
     A.AddAndRebalance(-7);
     A.AddAndRebalance(-8);
     A.AddAndRebalance(-9);
