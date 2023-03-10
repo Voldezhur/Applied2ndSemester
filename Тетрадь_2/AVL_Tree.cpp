@@ -416,19 +416,29 @@ int main()
 {
     AVL_tree A;
 
+    // Заполнение дерева элементами по возрастанию
     A.AddAndRebalance(-5);
     A.AddAndRebalance(3);
     A.AddAndRebalance(6);
     A.AddAndRebalance(7);
     A.AddAndRebalance(23);
-    A.AddAndRebalance(-7);
-    A.AddAndRebalance(-8);
-    A.AddAndRebalance(-9);
+    A.AddAndRebalance(50);
+    A.AddAndRebalance(52);
+    A.AddAndRebalance(70);
+    A.AddAndRebalance(102);
+    A.AddAndRebalance(111);
 
+    // Вывод дерева
     A.Print();
     std::cout << '\n';
 
-    A.Remove(-7);    
+    // Удаление
+    std::cout << "Какой элемент удалить? (по значению)\n";
+    int n;
+    
+    std::cin >> n;
+    
+    A.Remove(n);    
 
     A.Print();
 }
