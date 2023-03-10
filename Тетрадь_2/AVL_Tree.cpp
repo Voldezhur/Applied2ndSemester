@@ -433,12 +433,18 @@ int main()
     std::cout << '\n';
 
     // Удаление
-    std::cout << "Какой элемент удалить? (по значению)\n";
-    int n;
-    
-    std::cin >> n;
-    
-    A.Remove(n);    
+    std::cout << "Нужно удалить элемент?\ny/n\n";
+    char inp;
+    std::cin >> inp;
 
-    A.Print();
+    if(inp == 'y' or inp == 'Y')
+    {
+        std::cout << "Какой элемент удалить? (по значению)\n";
+        int n;
+        std::cin >> n;
+        
+        A.Remove(n);    
+
+        A.Print();
+    }
 }
