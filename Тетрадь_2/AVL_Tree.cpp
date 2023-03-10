@@ -92,7 +92,19 @@ struct AVL_tree
         // Перецепление указателей родителей
         _node->left->parent = _node->parent;
         _node->parent = _node->left;
-               
+
+        if(_node->left->parent)
+        {
+            if(_node->val < _node->left->parent->val)
+            {
+                _node->left->parent->left = _node->left;
+            }
+            else
+            {
+                _node->left->parent->right = _node->left;
+            }
+        }
+
         // Перецепление указателей правого поддерева левого поддерева опорного узла
         Node* T2 = _node->left->right;
         _node->left->right = _node;
@@ -110,7 +122,19 @@ struct AVL_tree
         // Перецепление указателей родителей
         _node->right->parent = _node->parent;
         _node->parent = _node->right;
-                
+   
+        if(_node->right->parent)
+        {
+            if(_node->val < _node->right->parent->val)
+            {
+                _node->right->parent->left = _node->right;
+            }
+            else
+            {
+                _node->right->parent->right = _node->right;
+            }
+        }
+
         // Перецепление указателей левого поддерева правого поддерева опорного узла
         Node* T2 = _node->right->left;
         _node->right->left = _node;
@@ -289,6 +313,102 @@ struct AVL_tree
         }
     }
 
+    // Удаление узла по значению
+    void Remove(int _val)
+    {
+        // Поиск нужного узла
+        Node* removing = this->Find(_val);
+
+        // Если такого нет
+        if(!removing)
+        {
+            return;
+        }
+
+        // Найти родителя удаляемого листа
+        Node* parent = Find(_val)->parent;
+
+        // 1: Если у узла нет потомков
+        if(removing->left == nullptr && removing->right == nullptr)
+        {
+            // Если он слева, приравнять левого потомка к пустому указателю
+            if(parent->left && parent->left->val == _val)
+            {
+                parent->left = nullptr;
+            }
+
+            // Если он справа, приравнять правого потомка к пустому указателю
+            else
+            {
+                parent->right = nullptr;
+            }
+
+            delete removing;
+        }
+    
+        // 2: Если у узла есть оба потомка и у левого есть правое поддерево
+        else if(removing->left && removing->right && removing->left->right)
+        {
+            // Найти максимальный узел правого поддерева
+            Node* max = removing->left->right;
+
+            while(max->right)
+            {
+                max = max->right;
+            }
+
+            // Вставить максимальный узел вместо удаляемого, затем удалить оставшийся максимальный узел через метод Remove()
+            int value = max->val;
+            Remove(value);
+            removing->val = value;
+        }
+    
+        // 3: Если у узла есть оба потомка и у левого нет правого поддерева
+        else if(removing->left && removing->right)
+        {
+            // Вставить корень левого поддерева на место удаляемого узла
+            int value = removing->left->val;
+            Remove(value);
+            removing->val = value;
+        }
+
+        // 4.1: Если у узла есть только правый потомок
+        else if(removing->left && !removing->right)
+        {
+            // Если он слева, приравнять левого потомка к пустому указателю
+            if(parent->left && parent->left->val == _val)
+            {
+                parent->left = removing->right;
+            }
+
+            // Если он справа, приравнять правого потомка к пустому указателю
+            else
+            {
+                parent->right = removing->right;
+            }
+
+            delete removing;
+        }
+
+        // 4.2: Если у узла есть только левый потомок
+        else if(!removing->left && removing->right)
+        {
+            // Если он слева, приравнять левого потомка к пустому указателю
+            if(parent->left && parent->left->val == _val)
+            {
+                parent->left = removing->left;
+            }
+
+            // Если он справа, приравнять правого потомка к пустому указателю
+            else
+            {
+                parent->right = removing->left;
+            }
+
+            delete removing;
+        }
+    }
+
 };
 
 
@@ -301,6 +421,15 @@ int main()
     A.AddAndRebalance(6);
     A.AddAndRebalance(7);
     A.AddAndRebalance(23);
+
+    A.AddAndRebalance(-7);
+    A.AddAndRebalance(-8);
+    A.AddAndRebalance(-9);
+
+    A.Print();
+    std::cout << '\n';
+
+    A.Remove(-7);    
 
     A.Print();
 }
