@@ -5,7 +5,7 @@
 #include <cmath>
 
 // КЧ дерево
-struct AVL_tree
+struct RB_tree
 {
     // Структура узла АВЛ дерева
     struct Node
@@ -68,7 +68,7 @@ struct AVL_tree
         // Иначе, если меньше, идем влево
         else if(_val < root->val)
         {
-            AVL_tree Left;
+            RB_tree Left;
             Left.root = root->left;
 
             return Left.Find(_val);
@@ -77,7 +77,7 @@ struct AVL_tree
         // Иначе, если больше, идем вправо
         else if(_val > root->val)
         {
-            AVL_tree Right;
+            RB_tree Right;
             Right.root = root->right;
 
             return Right.Find(_val);
@@ -128,12 +128,12 @@ struct AVL_tree
             d++;
 
             // Проход по левой ветви
-            AVL_tree Left;
+            RB_tree Left;
             Left.root = par->left;
             int a = Left.Depth(Left.root, d);
 
             // Проход по правой ветви
-            AVL_tree Right;
+            RB_tree Right;
             Right.root = par->right;
             int b = Right.Depth(Right.root, d);
 
@@ -163,7 +163,7 @@ struct AVL_tree
                 // Перекраска деда и проверка на КК нарушениие, если дед не корень
                 if(_node->parent->parent->parent)
                 {
-                    _node->parent->parent->isBlack = true;
+                    _node->parent->parent->isBlack = false;
                     
                     // Проверка на КК нарушение
                     Node* D = _node->parent->parent;
@@ -211,12 +211,12 @@ struct AVL_tree
             {
                 // Перекраска отца и дяди
                 _node->parent->isBlack = true;
-                _node->parent->parent->right->isBlack = true;
+                _node->parent->parent->left->isBlack = true;
 
                 // Перекраска деда и проверка на КК нарушениие, если дед не корень
                 if(_node->parent->parent->parent)
                 {
-                    _node->parent->parent->isBlack = true;
+                    _node->parent->parent->isBlack = false;
                     
                     // Проверка на КК нарушение
                     Node* D = _node->parent->parent;
@@ -260,6 +260,8 @@ struct AVL_tree
     // Добавление элементов в дерево
     void Add(int _val)
     {
+        bool added = false; // Флаг для проверки того, добавили ли узел в дерево
+
         // Если узел пустой: вставить в узел
         if(root == nullptr)
         {
@@ -282,12 +284,14 @@ struct AVL_tree
             {
                 root->left = new Node(_val);
                 root->left->parent = root;
+
+                added = true;
             }
 
             // Иначе
             else
             {
-                AVL_tree Left;
+                RB_tree Left;
                 Left.root = root->left;
                 
                 Left.Add(_val);
@@ -302,12 +306,14 @@ struct AVL_tree
             {
                 root->right = new Node(_val);
                 root->right->parent = root;
+
+                added = true;
             }
 
             // Иначе
             else
             {
-                AVL_tree Right;
+                RB_tree Right;
                 Right.root = root->right;
                 
                 Right.Add(_val);
@@ -315,11 +321,14 @@ struct AVL_tree
         }
 
         // Проверка на КК нарушение
-        Node* D = Find(_val);
-        
-        if(D->parent && D->parent->parent && D->parent->parent->right && D->parent->parent->left)
+        if(added)
         {
-            RR_Violation(Find(_val));
+            Node* D = Find(_val);
+            
+            if(D->parent && D->parent->parent && D->parent->parent->right && D->parent->parent->left)
+            {
+                RR_Violation(Find(_val));
+            }
         }
     }
 };
@@ -327,7 +336,7 @@ struct AVL_tree
 
 int main()
 {
-    AVL_tree A;
+    RB_tree A;
 
     A.Add(-5);
     A.Add(-7);
@@ -335,6 +344,5 @@ int main()
     A.Add(6);
     A.Add(1);
     A.Add(23);
-
     A.Print();
 }
