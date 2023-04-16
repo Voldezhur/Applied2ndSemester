@@ -1,12 +1,17 @@
 #include <iostream>
 #include <vector>
 
-class Heap
+class maxHeap
 {
 public:
     std::vector<int> H;
 
-    Heap(std::vector<int> _H)
+    maxHeap()
+    {
+        H = {};
+    }
+
+    maxHeap(std::vector<int> _H)
     {
         H = _H;
     }
@@ -61,6 +66,49 @@ public:
                 pushDown((i - 1) / 2);
                 pushDown(i);
             }
+        }
+    }
+
+    // Вывод максимума
+    int max()
+    {
+        return H[0];
+    }
+
+    int popMax()
+    {
+        int max = H[0];
+        
+        // Удаляем вершину перемещаем последний элемент в вершину
+        H[0] = H[-1];
+        H.pop_back();
+
+        // "Протискиваем" вершину вниз
+        pushDown(0);
+
+        return max;
+    }
+
+    // Вставка элемента
+    void insert(int val)
+    {
+        int i, parent;
+        i = H.size();
+
+        H[i] = val;
+        parent = (i - 1) / 2;
+
+        while(parent >= 0 && i > 0)
+        {
+            if(H[i] > H[parent])
+            {
+                int temp = H[i];
+                H[i] = H[parent];
+                H[parent] = temp;
+            }
+            
+            i = parent;
+            parent = (i - 1) / 2;
         }
     }
 };
@@ -134,11 +182,20 @@ int main()
 {
     std::vector<int> nums = {16, 1, 2, 8, 7, 4, 14, 10, 9, 3};
 
-    Heap A(nums);
+    maxHeap A(nums);
     A.balance();
     A.show();
 
     minHeap B(nums);
     B.balance();
     B.show();
+
+    std::cout << "\nМаксимальное значение первой кучи: " << A.popMax() << '\n';
+    
+    std::cout << "\nУдаление максимального элемента из первой кучи\n";
+    A.show();
+
+    std::cout << "\nВставка элемента '100' в первую кучу\n";
+    A.insert(100);
+    A.show();
 }
