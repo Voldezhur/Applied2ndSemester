@@ -75,13 +75,18 @@ public:
         return H[0];
     }
 
+    // Вывод и удаление максимума
     int popMax()
     {
         int max = H[0];
         
         // Удаляем вершину перемещаем последний элемент в вершину
-        H[0] = H[-1];
+        int temp = H[0];
+        H[0] = H.back();
+        H.back() = temp;
         H.pop_back();
+
+        H.shrink_to_fit();
 
         // "Протискиваем" вершину вниз
         pushDown(0);
@@ -93,7 +98,7 @@ public:
     void insert(int val)
     {
         int i, parent;
-        i = H.size();
+        i = H.size() - 1;
 
         H[i] = val;
         parent = (i - 1) / 2;
@@ -110,6 +115,20 @@ public:
             i = parent;
             parent = (i - 1) / 2;
         }
+    }
+
+    // Слияние кучи с другой
+    void merge(maxHeap B)    
+    {
+        std::vector<int> temp;
+        
+        temp.reserve(H.size() + B.H.size());
+        temp.insert(temp.end(), H.begin(), H.end());
+        temp.insert(temp.end(), B.H.begin(), B.H.end());
+
+        H = temp;
+
+        balance();
     }
 };
 
@@ -197,5 +216,17 @@ int main()
 
     std::cout << "\nВставка элемента '100' в первую кучу\n";
     A.insert(100);
+    A.show();
+
+    std::cout << "\nСоздание новой максимальной кучи\n";
+    std::vector<int> nums2 = {5, 6, 11, 12, 13, 15};
+    
+    maxHeap C(nums2);
+    C.balance();
+    C.show();
+
+    std::cout << "\nСлияние первой кучи с новой\n";
+    
+    A.merge(C);
     A.show();
 }
