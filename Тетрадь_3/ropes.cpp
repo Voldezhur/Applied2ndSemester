@@ -92,6 +92,7 @@ public:
 
 int main()
 {
+    // Создание массива канатов
     std::vector<int> nums = {5, 4, 2, 8};
 
     minHeap ropes(nums);
