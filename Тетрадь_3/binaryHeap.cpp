@@ -122,6 +122,7 @@ public:
     {
         std::vector<int> temp;
         
+        // Конкатенация векторов
         temp.reserve(H.size() + B.H.size());
         temp.insert(temp.end(), H.begin(), H.end());
         temp.insert(temp.end(), B.H.begin(), B.H.end());
