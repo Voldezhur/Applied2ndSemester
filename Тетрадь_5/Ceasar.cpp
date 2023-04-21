@@ -16,7 +16,19 @@ int main()
 
     for(int i = 0; i < message.length(); i++)
     {
-        sipher += (message[i] + key);
+        char letter;
+        
+        if(message[i] + key <= 122)
+        {
+            letter = message[i] + key;
+        }   
+
+        else
+        {
+            letter = message[i] + key - 26;
+        }
+
+        sipher += letter;
     }
 
     std::cout << '\n' << sipher;
