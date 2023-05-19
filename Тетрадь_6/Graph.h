@@ -8,11 +8,34 @@ class Graph
     std::vector<std::vector<float>> adjacency;
 
 public:
-
+    // Конструктор по умолчанию
     Graph();
 
-    Graph(std::vector<std::vector<float>> _adjacency, std::string matrixType);
+    // Конструктор по матрице (Смежности или инцидентности)
+    Graph(std::vector<std::vector<float>> inputMatrix, std::string matrixType);
 
+    // Вернуть размер графа
+    int size();
+
+    // Вывести матрицу смежности
     void showAdjacency();
-    void showAdjacency(char separator);
+    // Перегрузка для ввода собственного разделителя столбцов
+    void showAdjacency(char separator); 
+
+    // Добавить ребро между двумя вершинами
+    void addEdge(int a, int b);
+    // Удалить ребро меду двумя вершинами
+    void removeEdge(int a, int b);
+
+    // Удалить ребро из графа и из матриц
+    void removeVertex(int a);
+
+    // Удалить пустые вершины (нулевые строки)
+    void removeEmptyVertices();
+
+    // Удалить компоненту связности по одной из вершин
+    void removeComponent(int a);
+
+    // Вернуть количество компонент связности (Алгоритм связности)
+    unsigned int numberOfComponents();
 };
