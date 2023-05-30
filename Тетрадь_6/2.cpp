@@ -4,6 +4,7 @@
 
 int main()
 {
+    // Созданиие матрицы, заданной матрицей смежности
     std::vector<std::vector<float>> inputMatrix = {{0, 0, 0, 1, 1, 1, 0}, {0, 0, 1, 0, 0, 0, 1}, {0, 1, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}};
 
     Graph A(inputMatrix, "adjacency");
@@ -11,17 +12,13 @@ int main()
     A.showAdjacency();
 
     // Вывод количества компонент
-    std::cout << A.numberOfComponents();
+    std::cout << "\nКоличество компонент связности: " << A.numberOfComponents() << '\n';
 
-    // // Удаление компоненты, содержащей первую вершину
-    // A.removeComponent(1);
+    
+    // Создание матрицы, заданной матрицей инцидентности
+    inputMatrix = {{1, 1, 1, 0, 0}, {0, 0, 0, 1, 1}, {0, 0, 0, 0, 1}, {0, 0, 1, 0, 0}, {0, 1, 0, 0, 0}, {1, 0, 0, 0, 0}, {0, 0, 0, 1, 0}};
 
-    // std::cout << '\n' << A.size() << '\n';
-    // A.showAdjacency();
+    Graph B(inputMatrix, "incidence");
 
-    // // Удаление компоненты, содержащей первую вершину
-    // A.removeComponent(1);
-
-    // std::cout << '\n' << A.size() << '\n';
-    // A.showAdjacency();
+    B.showIncidence();
 }

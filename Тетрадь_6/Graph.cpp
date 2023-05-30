@@ -2,7 +2,6 @@
 
 Graph::Graph()
 {
-    numberOfNodes = 2;
     adjacency = {{0, 0}, {0, 0}};
 }
 
@@ -11,17 +10,19 @@ Graph::Graph(std::vector<std::vector<float>> inputMatrix, std::string matrixType
     if(matrixType == "adjacency")
     {
         adjacency = inputMatrix;
-        numberOfNodes = adjacency.size();
     }   
 
     else if(matrixType == "incidence")
     {
+        incidence = inputMatrix;
 
+        // Перевод в матрицу смежности
     }
 
     else
     {
         std::cout << "\n*unknown input matrix type*\n";
+        adjacency = {{0, 0}, {0, 0}};
     }
 }
 
@@ -56,6 +57,32 @@ void Graph::showAdjacency(char separator)
     }
 }
 
+void Graph::showIncidence()
+{
+    for(std::vector<float> i : incidence)
+    {
+        for(float j : i)
+        {
+            std::cout << j << ' ';
+        }
+
+        std::cout << '\n';
+    }
+}
+
+void Graph::showIncidence(char separator)
+{
+    for(std::vector<float> i : incidence)
+    {
+        for(float j : i)
+        {
+            std::cout << j << separator;
+        }
+
+        std::cout << '\n';
+    }
+}
+
 void Graph::addEdge(int a, int b)
 {
     a--;
@@ -63,6 +90,23 @@ void Graph::addEdge(int a, int b)
     
     adjacency[a][b] = 1;
     adjacency[b][a] = 1;
+}
+
+void Graph::addEdge(int a, int b, float value)
+{
+    a--;
+    b--;
+    
+    adjacency[a][b] = value;
+    adjacency[b][a] = value;
+}
+
+float Graph::getSideLength(int a, int b)
+{
+    a--;
+    b--;
+
+    return adjacency[a][b];
 }
 
 void Graph::removeEdge(int a, int b)
@@ -169,13 +213,67 @@ void Graph::removeComponent(int a)
     removeEmptyVertices();
 }
 
+int Graph::findClosestVertex(int a)
+{
+    a--;
+
+    int minimum = 0;
+    int closestIndex = 0;
+
+    for(int i = 0; i < adjacency[a].size(); i++)
+    {
+        if(i != a && adjacency[a][i] != 0)
+        {
+            if(minimum == 0 || adjacency[a][i] < minimum)
+            {
+                minimum = adjacency[a][i];
+                closestIndex = i;
+            }
+        }
+    }
+
+    return closestIndex + 1;
+}
+
+std::vector<int> Graph::getEmptyVertices()
+{
+    // Список пустых вершин
+    std::vector<int> emptyVertices;
+
+    // Нахождение пустых вершин
+    for(int i = 0; i < adjacency.size(); i++)
+    {
+        bool empty = true;
+        // Проверка на пустоту
+        for(float j : adjacency[i])
+        {
+            if(j != 0)
+            {
+                empty = false;
+                break;
+            }
+        }
+
+        if(empty)
+        {
+            emptyVertices.push_back(i + 1);
+            // i + 1 т.к. i это индекс (на 1 меньше)
+        }
+    }
+
+    return emptyVertices;
+}
+
 unsigned int Graph::numberOfComponents()
 {
     int numberOfComponents = 0;
-    
+
+    // Пока не пустая матрица - удаляем компоненты
     while(adjacency.size() > 0)
     {
-        removeComponent(0);
+        removeComponent(1);
+
+        numberOfComponents++;
     }
     
     return numberOfComponents;

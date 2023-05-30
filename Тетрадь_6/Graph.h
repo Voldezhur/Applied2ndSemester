@@ -4,8 +4,8 @@
 
 class Graph
 {
-    int numberOfNodes;
     std::vector<std::vector<float>> adjacency;
+    std::vector<std::vector<float>> incidence;
 
 public:
     // Конструктор по умолчанию
@@ -22,8 +22,19 @@ public:
     // Перегрузка для ввода собственного разделителя столбцов
     void showAdjacency(char separator); 
 
+    // Вывести матрицу инцидентности
+    void showIncidence();
+    // Перегрузка для ввода собственного разделителя столбцов
+    void showIncidence(char separator); 
+
     // Добавить ребро между двумя вершинами
     void addEdge(int a, int b);
+    // Перегрузка для взвешенных матриц
+    void addEdge(int a, int b, float value);
+
+    // Вернуть длину ребра между вершинами
+    float getSideLength(int a, int b);
+
     // Удалить ребро меду двумя вершинами
     void removeEdge(int a, int b);
 
@@ -35,6 +46,12 @@ public:
 
     // Удалить компоненту связности по одной из вершин
     void removeComponent(int a);
+
+    // Вернуть номер ближайшей вершины
+    int findClosestVertex(int a);
+
+    // Вернуть список пустых вершин
+    std::vector<int> getEmptyVertices();
 
     // Вернуть количество компонент связности (Алгоритм связности)
     unsigned int numberOfComponents();
