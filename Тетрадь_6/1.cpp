@@ -58,15 +58,15 @@ int main()
     B.addEdge(v, u, A.getSideLength(v, u));
 
     // Цикл из тетради
-    // while(unconnected.size() > 0)
-    // {
+    while(unconnected.size() > 0)
+    {
         // Поиск ближайшей вершины к любой из присоединенных
         for(int i : unconnected)
         {
             // std::cout << "\ntest: " << i;
             int vertexToConnect = A.findClosestVertex(i);
             // std::cout << ' ' << vertexToConnect;
-            // Если ближайшая вершина к проверяемой находится в списке приоединенных - присоединить
+            // Если ближайшая вершина к проверяемой находится в списке присоединенных - присоединить
             if(std::find(connected.begin(), connected.end(), vertexToConnect) != connected.end())
             {
                 B.addEdge(vertexToConnect, i, A.getSideLength(vertexToConnect, i));
@@ -75,7 +75,7 @@ int main()
                 std::cout << "\nAdded connection\n";
             }
         }
-    // }
+    }
 
     // outputVectors(connected, unconnected);
 

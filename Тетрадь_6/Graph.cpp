@@ -16,7 +16,39 @@ Graph::Graph(std::vector<std::vector<float>> inputMatrix, std::string matrixType
     {
         incidence = inputMatrix;
 
+        // Создание матрицы смежности
+        for(int i = 0; i < incidence.size(); i++)
+        {
+            std::vector<float> line;
+            
+            for(int j = 0; j < incidence.size(); j++)
+            {
+                line.push_back(0);
+            }
+
+            adjacency.push_back(line);
+        }
+
         // Перевод в матрицу смежности
+        for(int i = 0; i < incidence[0].size(); i++)
+        {
+            int v1 = -1, v2 = -1;
+            
+            for(int j = 0; j < incidence.size(); j++)
+            {
+                if(incidence[j][i] == 1)
+                {
+                    if(v1 == -1) v1 = j;
+
+                    else v2 = j;
+                }
+
+                if(v2 != -1) break;
+            }
+
+            adjacency[v1][v2] = 1;
+            adjacency[v2][v1] = 1;
+        }
     }
 
     else

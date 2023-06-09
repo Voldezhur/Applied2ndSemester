@@ -1,4 +1,5 @@
 // g++ -o 2 2.cpp Graph.cpp && ./2
+// перевести инцидентности в смежности
 
 #include "Graph.h"
 
@@ -9,16 +10,22 @@ int main()
 
     Graph A(inputMatrix, "adjacency");
 
+    std::cout << "Матрица смежности первого графа:\n";
     A.showAdjacency();
 
     // Вывод количества компонент
-    std::cout << "\nКоличество компонент связности: " << A.numberOfComponents() << '\n';
-
+    std::cout << "\nКоличество компонент связности первого графа: " << A.numberOfComponents() << "\n\n";
+    
     
     // Создание матрицы, заданной матрицей инцидентности
     inputMatrix = {{1, 1, 1, 0, 0}, {0, 0, 0, 1, 1}, {0, 0, 0, 0, 1}, {0, 0, 1, 0, 0}, {0, 1, 0, 0, 0}, {1, 0, 0, 0, 0}, {0, 0, 0, 1, 0}};
 
     Graph B(inputMatrix, "incidence");
 
+    std::cout << "Матрица инцидентности второго графа:\n";
     B.showIncidence();
+    std::cout << "\nМатрица смежности первого графа:\n";
+    B.showAdjacency();
+
+    std::cout << "\nКоличество компонент связности второго графа: " << B.numberOfComponents() << "\n\n";
 }
