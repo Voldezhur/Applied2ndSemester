@@ -1,4 +1,5 @@
 #include "Graph.h"
+#include <algorithm>
 
 Graph::Graph()
 {
@@ -309,4 +310,58 @@ unsigned int Graph::numberOfComponents()
     }
     
     return numberOfComponents;
+}
+
+void Graph::nearestNeighbour(int v)
+{
+    // Алгоритм ближайшего соседа
+    int w = 0;
+    int v1 = v;
+
+    std::vector<int> marked, unmarked, route;
+
+    for(int i = 0; i < adjacency.size(); i++)
+    {
+        unmarked.push_back(i);
+    }
+
+    route.push_back(v + 1);
+    marked.push_back(v1);
+    // erase-remove idiom
+    unmarked.erase(std::remove(unmarked.begin(), unmarked.end(), v1), unmarked.end());
+
+    while(marked.size() < adjacency.size())
+    {
+        // Нахождение ближайшей неотмеченной вершины
+        int closest = -1;
+        for(int i = 0; i < adjacency[v1].size(); i++)
+        {
+            if(closest == -1 && adjacency[v1][i] != 0 && std::find(unmarked.begin(), unmarked.end(), i) != unmarked.end())
+            {
+                closest = i;
+            }
+
+            else if(i < closest && adjacency[v1][i] != 0 && std::find(unmarked.begin(), unmarked.end(), i) != unmarked.end())
+            {
+                closest = i;
+            }
+        }
+
+        int u = closest;
+
+        route.push_back(u + 1);
+
+        w += adjacency[v1][u];
+        v1 = u;
+        marked.push_back(v1);
+        unmarked.erase(std::remove(unmarked.begin(), unmarked.end(), v1), unmarked.end());
+    }
+
+    route.push_back(v + 1);
+    w += getSideLength(v1, v);
+
+    std::cout << "\nМаршрут: ";
+    for(int i : route) std::cout << i;
+
+    std::cout << "\nДлина маршрута: " << w << '\n';
 }

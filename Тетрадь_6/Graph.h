@@ -55,4 +55,6 @@ public:
 
     // Вернуть количество компонент связности (Алгоритм связности)
     unsigned int numberOfComponents();
+
+    void nearestNeighbour(int v);
 };
